@@ -2,14 +2,12 @@ package com.capstone.renewal.domain.user;
 
 import com.capstone.renewal.domain.user.dto.request.DuplicationUidRequest;
 import com.capstone.renewal.domain.user.dto.request.SignUpRequest;
-import com.capstone.renewal.domain.user.dto.response.DuplicationUidResponse;
 import com.capstone.renewal.domain.user.dto.response.SignUpResponse;
 import com.capstone.renewal.global.error.BaseException;
 import com.capstone.renewal.global.error.ErrorCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +22,7 @@ public class UserService {
         if(isDuplicated) throw new BaseException(ErrorCode.INVALID_UID_DUPLICATE);
         else return false; // false > 중복된게 없을 때. 성공사례임.
     }
+
     public SignUpResponse insertUserAndReturn(SignUpRequest request) {
         if(strIsEmpty(request.password())
                 || strIsEmpty(request.name())
