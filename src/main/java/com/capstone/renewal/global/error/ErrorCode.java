@@ -21,6 +21,10 @@ public enum ErrorCode {
     INVALID_UID_IS_EMPTY(HttpStatus.BAD_REQUEST,4002,"아이디를 입력해주세요."),
     // 회원가입 > 빈 값 존재
     INVALID_SOMETHING_IS_EMPTY(HttpStatus.BAD_REQUEST,4003,"입력값을 확인해주세요."),
+    // 로그인 - 비밀번호 틀림
+    SIGN_IN_NOT_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, 4004,"비밀번호가 틀립니다."),
+    // 로그인 - 일치하는 유저가 없을때
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, 4005, "해당 사용자를 찾을 수 없습니다."),
     // 회원가입 > 알수없는 오류 -> 서버잘못
     SIGN_UP_ERROR_SOMETHING_ELSE(HttpStatus.INTERNAL_SERVER_ERROR,5000,"알수없는 오류입니다. 다시 시도해주세요.");
 

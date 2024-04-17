@@ -1,6 +1,5 @@
 package com.capstone.renewal.global.error;
 
-import com.capstone.renewal.global.error.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

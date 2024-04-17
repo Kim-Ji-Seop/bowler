@@ -1,11 +1,12 @@
 package com.capstone.renewal.domain.user;
 
 import com.capstone.renewal.domain.user.dto.request.DuplicationUidRequest;
+import com.capstone.renewal.domain.user.dto.request.LoginRequest;
 import com.capstone.renewal.domain.user.dto.request.SignUpRequest;
 import com.capstone.renewal.domain.user.dto.response.DuplicationUidResponse;
+import com.capstone.renewal.domain.user.dto.response.LoginResponse;
 import com.capstone.renewal.domain.user.dto.response.SignUpResponse;
 import com.capstone.renewal.global.BaseResponse;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,14 @@ public class UserController {
     @PostMapping("/users/auth/registration")
     public ResponseEntity<BaseResponse<SignUpResponse>> signUp(@RequestBody SignUpRequest request){
         SignUpResponse response = userService.insertUserAndReturn(request);
+        return ResponseEntity.ok(new BaseResponse<>(response));
+    }
+    /*
+     * 로그인 - 아이디/패스워드
+     */
+    @PostMapping("/users/auth/login")
+    public ResponseEntity<BaseResponse<LoginResponse>> signIn(@RequestBody LoginRequest request){
+        LoginResponse response = userService.loginUser(request);
         return ResponseEntity.ok(new BaseResponse<>(response));
     }
 }
