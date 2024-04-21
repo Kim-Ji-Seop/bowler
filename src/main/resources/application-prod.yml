@@ -1,0 +1,23 @@
+server:
+  port: ${SERVER_PORT}
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:mysql://${DB_ENDPOINT}:3306/${DB_SCHEMA}?serverTimezone=UTC&characterEncoding=UTF-8
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+jwt:
+  header: Authorization
+  secret: ${JWT_TOKEN}
