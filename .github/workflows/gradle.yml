@@ -47,7 +47,16 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
         SERVER_PORT: ${{ secrets.SERVER_PORT }}
-    
+
+    - name: Create env file
+      run: |
+        echo DB_ENDPOINT=${{ secrets.DB_ENDPOINT }} >> .env
+        echo DB_SCHEMA=${{ secrets.DB_SCHEMA }} >> .env
+        echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+        echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+        echo JWT_TOKEN=${{ secrets.JWT_TOKEN }} >> .env
+        echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> .env
+
     ## 이미지 빌드 및 도커허브에 push
     - name: server docker build and push
       run: |
@@ -70,7 +79,16 @@ jobs:
         key: ${{ secrets.KEY }}
         source: "/github/workspace/docker-compose.yaml"
         target: "/home/ubuntu/"
-        
+
+    - name: Copy .env to EC2
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ubuntu
+        key: ${{ secrets.KEY }}
+        source: "/github/workspace/.env"
+        target: "/home/ubuntu/"
+
     ## docker compose up
     # HOST : 인스턴스 주소
     # KEY : rsa - 전부 복사, % 제외
