@@ -7,7 +7,7 @@ spring:
     url: jdbc:mysql://${DB_ENDPOINT}:3306/${DB_SCHEMA}?serverTimezone=UTC&characterEncoding=UTF-8
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:

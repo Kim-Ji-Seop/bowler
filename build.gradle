@@ -21,6 +21,15 @@ repositories {
 	mavenCentral()
 }
 
+jar {
+	enabled = false
+}
+
+bootJar {
+	archiveBaseName.set('capstone')
+	archiveVersion.set('0.0.1-SNAPSHOT')
+}
+
 dependencies {
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 	runtimeOnly 'mysql:mysql-connector-java'

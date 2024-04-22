@@ -2,11 +2,11 @@ version: '3'
 services:
   server:
     container_name: server
-    image: kimjiseop/capstoneuou-server
+    image: kimjiseop/capstone-design-server
     expose:
-      - 8081
+      - 8082
     ports:
-      - 8081:8081
+      - 8082:8082
     restart: "always"
     environment:
       TZ: "Asia/Seoul" # timezone 설정
@@ -26,7 +26,7 @@ services:
       - redis-data:/data
   nginx:
     container_name: nginx
-    image: kimjiseop/capstoneuou-nginx
+    image: kimjiseop/capstone-design-nginx
     restart: unless-stopped
     ports:
       - 80:80
