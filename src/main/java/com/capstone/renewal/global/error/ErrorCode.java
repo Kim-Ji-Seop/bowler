@@ -14,7 +14,6 @@ public enum ErrorCode {
 
     // 커스텀 코드
     // 회원가입 - 정규표현식
-    INVALID_UID_FORMAT(HttpStatus.BAD_REQUEST,4000,"아이디 정규 표현식 예외입니다."),
     // 회원가입 - 중복확인
     INVALID_UID_DUPLICATE(HttpStatus.BAD_REQUEST,4001,"중복된 아이디 입니다."),
     // 회원가입 - 중복확인 > 아이디 빈값
@@ -25,6 +24,11 @@ public enum ErrorCode {
     SIGN_IN_NOT_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, 4004,"비밀번호가 틀립니다."),
     // 로그인 - 일치하는 유저가 없을때
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 4005, "해당 사용자를 찾을 수 없습니다."),
+    // 회원가입 - 정규표현식
+    INVALID_UID_FORMAT(HttpStatus.BAD_REQUEST, 4006, "아이디는 영문자로 시작하고 영문자 또는 숫자를 포함할 수 있으며 최대 16자입니다."),
+    INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, 4007, "비밀번호는 8~16자리여야 하며, 최소 하나의 문자, 숫자, 특수문자를 포함해야 합니다."),
+    INVALID_NAME_FORMAT(HttpStatus.BAD_REQUEST, 4008, "이름은 한글 또는 영문자로 이루어져 있어야 하며, 최대 10자입니다."),
+    INVALID_NICKNAME_FORMAT(HttpStatus.BAD_REQUEST, 4009, "별명은 한글 또는 영문자로 이루어져 있어야 하며, 최대 10자입니다."),
     // 회원가입 > 알수없는 오류 -> 서버잘못
     SIGN_UP_ERROR_SOMETHING_ELSE(HttpStatus.INTERNAL_SERVER_ERROR,5000,"알수없는 오류입니다. 다시 시도해주세요.");
 

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +35,9 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "4001", description = "중복된 아이디 입니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "4002", description = "아이디를 입력해주세요.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "4006", description = "아이디는 영문자로 시작하고 영문자 또는 숫자를 포함할 수 있으며 최대 16자입니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<BaseResponse<DuplicationUidResponse>> checkDuplicationUid(@RequestBody DuplicationUidRequest duplicationUidRequest){
+    public ResponseEntity<BaseResponse<DuplicationUidResponse>> checkDuplicationUid(@Valid @RequestBody DuplicationUidRequest duplicationUidRequest){
         boolean isDuplicated = userService.uidDuplicationCheck(duplicationUidRequest);
         DuplicationUidResponse response = new DuplicationUidResponse(isDuplicated);
         return ResponseEntity.ok(new BaseResponse<>(response));
@@ -45,7 +47,7 @@ public class UserController {
      */
     @PostMapping("/users/auth/registration")
     @Operation(summary = "회원가입", description = "회원가입 API")
-    public ResponseEntity<BaseResponse<SignUpResponse>> signUp(@RequestBody SignUpRequest request){
+    public ResponseEntity<BaseResponse<SignUpResponse>> signUp(@Valid @RequestBody SignUpRequest request){
         SignUpResponse response = userService.insertUserAndReturn(request);
         return ResponseEntity.ok(new BaseResponse<>(response));
     }
