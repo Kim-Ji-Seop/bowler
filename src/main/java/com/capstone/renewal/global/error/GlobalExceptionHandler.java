@@ -1,5 +1,6 @@
 package com.capstone.renewal.global.error;
 
+import io.swagger.v3.oas.models.links.Link;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,8 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -24,9 +24,10 @@ public class GlobalExceptionHandler {
         log.error("User not found: " + e.getMessage());
         return ErrorResponseEntity.toResponseEntity(ErrorCode.USER_NOT_FOUND);
     }
+    // 정규식 에러 핸들링 -> @Valid 예외
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<Map<Integer, ErrorResponseEntity>> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
-        Map<Integer, ErrorResponseEntity> errorResponses = new HashMap<>();
+    protected ResponseEntity<List<ErrorResponseEntity>> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+        List<ErrorResponseEntity> errorResponseEntities = new LinkedList<>();
 
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
             String fieldName = error.getField();
@@ -38,14 +39,11 @@ public class GlobalExceptionHandler {
                     .code(errorCode.getCode())
                     .errorMessage(errorMessage)
                     .build();
-
-            errorResponses.put(errorCode.getCode(), errorResponse);
+            errorResponseEntities.add(errorResponse);
         }
-        // 첫 번째 오류에 대한 응답만 반환하도록 설정
-        // ErrorResponseEntity firstErrorResponse = errorResponses.values().iterator().next();
         return ResponseEntity
                 .status(ErrorCode.BAD_REQUEST.getHttpStatus())
-                .body(errorResponses);
+                .body(errorResponseEntities);
     }
 
     private ErrorCode mapFieldErrorToErrorCode(String fieldName) {
