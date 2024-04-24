@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     }
     // 정규식 에러 핸들링 -> @Valid 예외
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<List<ErrorResponseEntity>> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+    protected ResponseEntity<RegexErrorResponseEntity> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         List<ErrorResponseEntity> errorResponseEntities = new LinkedList<>();
 
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity
                 .status(ErrorCode.BAD_REQUEST.getHttpStatus())
-                .body(errorResponseEntities);
+                .body(new RegexErrorResponseEntity(errorResponseEntities));
     }
 
     private ErrorCode mapFieldErrorToErrorCode(String fieldName) {
