@@ -5,20 +5,23 @@ import com.capstone.renewal.domain.user.dto.request.LoginRequest;
 import com.capstone.renewal.domain.user.dto.request.SignUpRequest;
 import com.capstone.renewal.domain.user.dto.response.DuplicationUidResponse;
 import com.capstone.renewal.domain.user.dto.response.LoginResponse;
+import com.capstone.renewal.domain.user.dto.response.LogoutResponse;
 import com.capstone.renewal.domain.user.dto.response.SignUpResponse;
 import com.capstone.renewal.global.BaseResponse;
+import com.capstone.renewal.global.jwt.JwtAuthenticationFilter;
+import com.capstone.renewal.global.jwt.JwtTokenProvider;
+import com.capstone.renewal.global.redis.RedisDao;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "UserController", description = "User API")
 public class UserController {
     private final UserService userService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    private final RedisDao redisDao;
     /*
      * 회원가입 - 중복확인
      */
@@ -59,5 +66,36 @@ public class UserController {
     public ResponseEntity<BaseResponse<LoginResponse>> signIn(@RequestBody LoginRequest request){
         LoginResponse response = userService.loginUser(request);
         return ResponseEntity.ok(new BaseResponse<>(response));
+    }
+    /*
+     * 자동로그인
+     * 여기까지 요청이 왔다는 것은, AT는 유효하다는 뜻.
+     */
+    @GetMapping("/users/auth/auto-login")
+    @Operation(summary = "자동 로그인", description = "자동 로그인 API")
+    public ResponseEntity<BaseResponse<LoginResponse>> autoLogin(@RequestHeader String token){
+        return null;
+    }
+    /*
+     * 리프레쉬 토큰 재발급
+     */
+    @GetMapping("/users/auth/reissue")
+    ResponseEntity<BaseResponse<LoginResponse>> reissue(HttpServletRequest request) throws JsonProcessingException {
+        String jwtToken=jwtAuthenticationFilter.getJwtFromRequest(request);
+        String userUid=jwtTokenProvider.getUserUidFromJWT(jwtToken);
+        LoginResponse postLoginRes = userService.reissue(userUid);
+
+        return ResponseEntity.ok(new BaseResponse<>(postLoginRes));
+    }
+    /*
+     * 로그아웃
+     */
+    @PostMapping("/users/auth/logout")
+    public ResponseEntity<BaseResponse<LogoutResponse>> logout(HttpServletRequest request){
+        String jwtToken=jwtAuthenticationFilter.getJwtFromRequest(request);
+        String userUid=jwtTokenProvider.getUserUidFromJWT(jwtToken);
+
+        LogoutResponse postLogoutRes = userService.logout(userUid,jwtToken);
+        return  ResponseEntity.ok(new BaseResponse<>(postLogoutRes));
     }
 }

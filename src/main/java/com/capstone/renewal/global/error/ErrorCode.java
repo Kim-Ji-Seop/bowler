@@ -29,6 +29,16 @@ public enum ErrorCode {
     INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, 4007, "비밀번호는 8~16자리여야 하며, 최소 하나의 문자, 숫자, 특수문자를 포함해야 합니다."),
     INVALID_NAME_FORMAT(HttpStatus.BAD_REQUEST, 4008, "이름은 한글 또는 영문자로 이루어져 있어야 하며, 최대 10자입니다."),
     INVALID_NICKNAME_FORMAT(HttpStatus.BAD_REQUEST, 4009, "별명은 한글 또는 영문자로 이루어져 있어야 하며, 최대 10자입니다."),
+    // jwt
+    TOKEN_NOT_EXIST(HttpStatus.UNAUTHORIZED, 401, "JWT Token이 존재하지 않습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED,  401,"유효하지 않은 JWT Token 입니다."),
+    ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,  401,"만료된 Access Token 입니다."),
+    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,  401,"만료된 Refresh Token 입니다."),
+    FAIL_AUTHENTICATION(HttpStatus.UNAUTHORIZED,  403,"사용자 인증에 실패하였습니다."),
+    EXPIRED_AUTHENTICATION(HttpStatus.UNAUTHORIZED,403,"인증정보가 만료되었습니다."),
+    // 로그아웃
+    USER_NOT_EXIST(HttpStatus.NOT_FOUND,4011,"존재하지 않는 유저입니다."),
+
     // 회원가입 > 알수없는 오류 -> 서버잘못
     SIGN_UP_ERROR_SOMETHING_ELSE(HttpStatus.INTERNAL_SERVER_ERROR,5000,"알수없는 오류입니다. 다시 시도해주세요.");
 
