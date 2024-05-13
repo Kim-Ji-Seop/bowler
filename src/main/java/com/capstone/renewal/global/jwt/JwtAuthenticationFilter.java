@@ -49,43 +49,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        // 1. Request에서 토큰을 꺼낸다.
         String jwt = getJwtFromRequest(request);
-        ErrorCode errorCode=null;
-        if(jwt==null){
-            // 2. 토큰이 빈값이면? -> 오류
-            errorCode = ErrorCode.TOKEN_NOT_EXIST;
-            sendErrorResponse(response,ErrorCode.TOKEN_NOT_EXIST);
-        }else{
-            // 3. 로그아웃된 유저의 요청인지 확인
-            try{
-                //Redis 에 해당 accessToken logout 여부 확인
-                String isLogout = redisDao.getValues(jwt);
-                if (ObjectUtils.isEmpty(isLogout)) {
-                    String uid = jwtTokenProvider.getUserUidFromJWT(jwt); //jwt에서 사용자 id를 꺼낸다.
-
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(uid, null, null); //id를 인증한다.
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //기본적으로 제공한 details 세팅
-                    SecurityContextHolder.getContext().setAuthentication(authentication); //세션에서 계속 사용하기 위해 securityContext에 Authentication 등록
-                }
-                filterChain.doFilter(request, response);
-
-                // jwt 토큰 유효성 검사
-            }catch (IllegalArgumentException e) {
-                log.error("an error occured during getting username from token", e);
-                sendErrorResponse(response,ErrorCode.INVALID_TOKEN);
-            } catch (ExpiredJwtException e) {
-                log.warn("the token is expired and not valid anymore", e);
-                sendErrorResponse(response,ErrorCode.ACCESS_TOKEN_EXPIRED);
-            } catch(SignatureException e){
-                log.error("Authentication Failed. Username or Password not valid.");
-                sendErrorResponse(response,ErrorCode.FAIL_AUTHENTICATION);
-            }catch(UnsupportedJwtException e){
-                log.error("UnsupportedJwt");
-                sendErrorResponse(response,ErrorCode.FAIL_AUTHENTICATION);
+        if (jwt == null) {
+            sendErrorResponse(response, ErrorCode.TOKEN_NOT_EXIST);
+            return; // 토큰이 없는 경우 여기서 처리 중단
+        }
+        try {
+            // Redis에서 로그아웃 여부 확인
+            String isLogout = redisDao.getValues(jwt);
+            if (!ObjectUtils.isEmpty(isLogout)) {
+                sendErrorResponse(response, ErrorCode.INVALID_TOKEN);
+                return; // 로그아웃된 토큰 처리 중단
             }
 
+            String uid = jwtTokenProvider.getUserUidFromJWT(jwt);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(uid, null, null);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            log.warn("the token is expired and not valid anymore", e);
+            sendErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
+        } catch (IllegalArgumentException | SignatureException | UnsupportedJwtException e) {
+            log.error("Error processing JWT", e);
+            sendErrorResponse(response, ErrorCode.FAIL_AUTHENTICATION);
         }
+
+
     }
 
     public String getJwtFromRequest(HttpServletRequest request) {

@@ -67,6 +67,7 @@ public class UserController {
     /*
      * 자동로그인
      * 여기까지 요청이 왔다는 것은, AT는 유효하다는 뜻.
+     * FE 에서는 AccessToken을 보내줘야함
      */
     @GetMapping("/users/auth/auto-login")
     @Operation(summary = "자동 로그인", description = "자동 로그인 API")
@@ -82,6 +83,7 @@ public class UserController {
     }
     /*
      * 리프레쉬 토큰 재발급
+     * FE는, 이미 AccessToken은 유효하지 않음이 자명하기에, RefreshToken을 요청으로 넣어줘야한다.
      */
     @GetMapping("/users/auth/reissue")
     ResponseEntity<BaseResponse<LoginResponse>> reissue(HttpServletRequest request) throws JsonProcessingException {
@@ -93,6 +95,7 @@ public class UserController {
     }
     /*
      * 로그아웃
+     * 로그아웃을 한 유저가 누구인지는 알아야하기 때문에, 이 또한 토큰으로 구분한다.
      */
     @PostMapping("/users/auth/logout")
     public ResponseEntity<BaseResponse<LogoutResponse>> logout(HttpServletRequest request){
