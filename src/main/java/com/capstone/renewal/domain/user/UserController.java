@@ -3,10 +3,7 @@ package com.capstone.renewal.domain.user;
 import com.capstone.renewal.domain.user.dto.request.DuplicationUidRequest;
 import com.capstone.renewal.domain.user.dto.request.LoginRequest;
 import com.capstone.renewal.domain.user.dto.request.SignUpRequest;
-import com.capstone.renewal.domain.user.dto.response.DuplicationUidResponse;
-import com.capstone.renewal.domain.user.dto.response.LoginResponse;
-import com.capstone.renewal.domain.user.dto.response.LogoutResponse;
-import com.capstone.renewal.domain.user.dto.response.SignUpResponse;
+import com.capstone.renewal.domain.user.dto.response.*;
 import com.capstone.renewal.global.BaseResponse;
 import com.capstone.renewal.global.jwt.JwtAuthenticationFilter;
 import com.capstone.renewal.global.jwt.JwtTokenProvider;
@@ -73,15 +70,22 @@ public class UserController {
      */
     @GetMapping("/users/auth/auto-login")
     @Operation(summary = "자동 로그인", description = "자동 로그인 API")
-    public ResponseEntity<BaseResponse<LoginResponse>> autoLogin(@RequestHeader String token){
-        return null;
+    public ResponseEntity<BaseResponse<AutoLoginResponse>> autoLogin(HttpServletRequest request){
+        // 1. Jwt 필터 클래스에서 헤더에 있는 Jwt를 가져온다.
+        String jwtToken = jwtAuthenticationFilter.getJwtFromRequest(request);
+        // 2. 해당 jwt에서 uid 정보를 가져온다.
+        String userUid = jwtTokenProvider.getUserUidFromJWT(jwtToken);
+        // 3. uid를 서비스 레이어에 전달한다.
+        AutoLoginResponse autoLoginResponse = userService.autoLogin(userUid);
+        // 4. 결괏값 Return (jwt토큰은 제외한 유저 정보를 반환)
+        return ResponseEntity.ok(new BaseResponse<>(autoLoginResponse));
     }
     /*
      * 리프레쉬 토큰 재발급
      */
     @GetMapping("/users/auth/reissue")
     ResponseEntity<BaseResponse<LoginResponse>> reissue(HttpServletRequest request) throws JsonProcessingException {
-        String jwtToken=jwtAuthenticationFilter.getJwtFromRequest(request);
+        String jwtToken = jwtAuthenticationFilter.getJwtFromRequest(request);
         String userUid=jwtTokenProvider.getUserUidFromJWT(jwtToken);
         LoginResponse postLoginRes = userService.reissue(userUid);
 

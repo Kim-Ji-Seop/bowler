@@ -3,6 +3,7 @@ package com.capstone.renewal.domain.user;
 import com.capstone.renewal.domain.user.dto.request.DuplicationUidRequest;
 import com.capstone.renewal.domain.user.dto.request.LoginRequest;
 import com.capstone.renewal.domain.user.dto.request.SignUpRequest;
+import com.capstone.renewal.domain.user.dto.response.AutoLoginResponse;
 import com.capstone.renewal.domain.user.dto.response.LoginResponse;
 import com.capstone.renewal.domain.user.dto.response.LogoutResponse;
 import com.capstone.renewal.domain.user.dto.response.SignUpResponse;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import static com.capstone.renewal.global.error.ErrorCode.USER_NOT_EXIST;
 
 @Service
 @Slf4j
@@ -133,7 +136,7 @@ public class UserService {
                 .set(jwtToken, "logout", expiration, TimeUnit.MILLISECONDS);
 
         return LogoutResponse.builder()
-                .uid(user.orElseThrow(()->new BaseException(ErrorCode.USER_NOT_EXIST)).getUid())
+                .uid(user.orElseThrow(()->new BaseException(USER_NOT_EXIST)).getUid())
                 .build();
     }
 
@@ -150,11 +153,25 @@ public class UserService {
         String uidFromRtk=jwtTokenProvider.getUserUidFromJWT(rtkInRedis);
         TokenDto tokenDto=jwtTokenProvider.reissueAtk(uid,uidFromRtk);
         Optional<UserEntity> user=userRepository.findByUid(uid);
+        if(user.isEmpty()) throw new BaseException(USER_NOT_EXIST);
         return LoginResponse.builder()
                 .name(user.get().getName())
                 .nickname(user.get().getNickname())
                 .scoreAvg(user.get().getScoreAvg())
                 .token(tokenDto)
+                .build();
+    }
+
+    public AutoLoginResponse autoLogin(String userUid) {
+        // 1. uid를 기준으로 유저 검색
+        Optional<UserEntity> user = userRepository.findByUid(userUid);
+        // 2. 검색해서 나온 유저로 Dto 구성해서 반환
+        if(user.isEmpty()) throw new BaseException(USER_NOT_EXIST);
+
+        return AutoLoginResponse.builder()
+                .name(user.get().getName())
+                .nickname(user.get().getNickname())
+                .scoreAvg(user.get().getScoreAvg())
                 .build();
     }
 }
