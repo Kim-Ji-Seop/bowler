@@ -43,14 +43,14 @@ public class JwtTokenProvider {
         String accessToken= Jwts.builder()
                 .setSubject(username) // 사용자
                 .claim("auth",authorities)
-                .setIssuedAt(new Date()) // 현재 시간 기반으로 생성 30 * 60
-                .setExpiration(new Date(now.getTime()+30 * 60 * 1000L)) // 만료 시간 세팅 (30분)
+                .setIssuedAt(new Date()) // 현재 시간 기반으로 생성
+                .setExpiration(new Date(now.getTime()+3000L)) // 만료 시간 세팅 (30분) 30 * 60 * 1000L
                 .signWith(key, SignatureAlgorithm.HS256) // 사용할 암호화 알고리즘, signature에 들어갈 secret 값 세팅
                 .compact();
         String refreshToken=Jwts.builder()
                 .setSubject(username) // 사용자
                 .setIssuedAt(new Date()) // 현재 시간 기반으로 생성
-                .setExpiration(expiryDate) // 만료 시간 세팅
+                .setExpiration(new Date(now.getTime()+60000L)) // 만료 시간 세팅 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256) // 사용할 암호화 알고리즘, signature에 들어갈 secret 값 세팅
                 .compact();
         // redis에 저장
@@ -76,14 +76,14 @@ public class JwtTokenProvider {
         String accessToken=Jwts.builder()
                 .setSubject((String) authentication.getPrincipal()) // 사용자
                 .setIssuedAt(new Date()) // 현재 시간 기반으로 생성
-                .setExpiration(new Date(now.getTime()+30 * 60 * 1000L)) // 만료 시간 세팅 (1일)
+                .setExpiration(new Date(now.getTime()+3000L)) // 만료 시간 세팅 (1일)
                 .signWith(key,SignatureAlgorithm.HS256) // 사용할 암호화 알고리즘, signature에 들어갈 secret 값 세팅
                 .compact();
 
         String refreshToken=Jwts.builder()
                 .setSubject((String) authentication.getPrincipal()) // 사용자
                 .setIssuedAt(new Date()) // 현재 시간 기반으로 생성
-                .setExpiration(expiryDate) // 만료 시간 세팅
+                .setExpiration(new Date(now.getTime()+60000L)) // 만료 시간 세팅
                 .signWith(key,SignatureAlgorithm.HS256) // 사용할 암호화 알고리즘, signature에 들어갈 secret 값 세팅
                 .compact();
 
