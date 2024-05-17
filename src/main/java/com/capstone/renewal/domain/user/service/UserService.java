@@ -1,4 +1,4 @@
-package com.capstone.renewal.domain.user;
+package com.capstone.renewal.domain.user.service;
 
 import com.capstone.renewal.domain.user.dto.request.DuplicationUidRequest;
 import com.capstone.renewal.domain.user.dto.request.LoginRequest;
@@ -7,6 +7,8 @@ import com.capstone.renewal.domain.user.dto.response.AutoLoginResponse;
 import com.capstone.renewal.domain.user.dto.response.LoginResponse;
 import com.capstone.renewal.domain.user.dto.response.LogoutResponse;
 import com.capstone.renewal.domain.user.dto.response.SignUpResponse;
+import com.capstone.renewal.domain.user.entity.UserEntity;
+import com.capstone.renewal.domain.user.repository.UserRepository;
 import com.capstone.renewal.global.CustomUserDetailService;
 import com.capstone.renewal.global.Role;
 import com.capstone.renewal.global.error.BaseException;

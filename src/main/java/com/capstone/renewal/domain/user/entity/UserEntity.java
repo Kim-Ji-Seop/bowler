@@ -1,5 +1,7 @@
-package com.capstone.renewal.domain.user;
+package com.capstone.renewal.domain.user.entity;
 
+import com.capstone.renewal.domain.matchroom.entity.HistoryEntity;
+import com.capstone.renewal.domain.matchroom.entity.MatchRoomEntity;
 import com.capstone.renewal.global.BaseEntity;
 import com.capstone.renewal.global.Role;
 import jakarta.persistence.*;
@@ -15,11 +17,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @DynamicInsert
 public class UserEntity extends BaseEntity implements UserDetails {
@@ -28,29 +32,31 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "id", nullable = false)
     private Long userIdx;
 
-    @Column(name = "uid", nullable = false)
+    @Column(name = "uid", nullable = false, length = 100)
     private String uid;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname", nullable = false, length = 50)
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 50)
+    @Column(name = "role", nullable = false, length = 45)
     private Role role;
 
     @Column(name = "score_avg", nullable = false)
     @ColumnDefault("0")
-    private int scoreAvg;
+    private Integer scoreAvg;
 
-    public UserEntity() {
+    @OneToMany(mappedBy = "user")
+    private List<MatchRoomEntity> matchRooms;
 
-    }
+    @OneToMany(mappedBy = "user")
+    private List<HistoryEntity> historys;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

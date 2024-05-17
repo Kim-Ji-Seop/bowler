@@ -3,6 +3,8 @@ package com.capstone.renewal.domain.user;
 import com.capstone.renewal.domain.user.dto.request.DuplicationUidRequest;
 import com.capstone.renewal.domain.user.dto.request.SignUpRequest;
 import com.capstone.renewal.domain.user.dto.response.SignUpResponse;
+import com.capstone.renewal.domain.user.repository.UserRepository;
+import com.capstone.renewal.domain.user.service.UserService;
 import com.capstone.renewal.global.error.BaseException;
 import com.capstone.renewal.global.error.ErrorCode;
 import jakarta.transaction.Transactional;

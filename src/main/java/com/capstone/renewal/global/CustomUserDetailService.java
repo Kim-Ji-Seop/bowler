@@ -1,6 +1,6 @@
 package com.capstone.renewal.global;
 
-import com.capstone.renewal.domain.user.UserRepository;
+import com.capstone.renewal.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

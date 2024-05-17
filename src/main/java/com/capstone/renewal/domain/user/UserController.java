@@ -4,6 +4,7 @@ import com.capstone.renewal.domain.user.dto.request.DuplicationUidRequest;
 import com.capstone.renewal.domain.user.dto.request.LoginRequest;
 import com.capstone.renewal.domain.user.dto.request.SignUpRequest;
 import com.capstone.renewal.domain.user.dto.response.*;
+import com.capstone.renewal.domain.user.service.UserService;
 import com.capstone.renewal.global.BaseResponse;
 import com.capstone.renewal.global.jwt.JwtAuthenticationFilter;
 import com.capstone.renewal.global.jwt.JwtTokenProvider;
